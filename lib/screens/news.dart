@@ -1,7 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:news_app/api/news_api.dart';
 
-class News extends StatelessWidget {
+class News extends StatefulWidget {
   const News({super.key});
+
+  @override
+  State<News> createState() => _NewsState();
+}
+
+class _NewsState extends State<News> {
+  @override
+
+  void initState() {
+    super.initState(); //runs all variable and function created, on the screen
+    newsApiCall();
+  }
+
+  void newsApiCall() async{
+    await NewsApi().getAllNews();
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -1,4 +1,4 @@
 class Config {
-  static String apiKey = "30ff354ba1bb4f8a817a9a8b38324afd";
+  static String apiKey = "de46541d57174eff8161156f9d1deffc";
   static String apiBaseUrl = "https://newsapi.org/v2";
 }
