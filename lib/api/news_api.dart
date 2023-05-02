@@ -1,5 +1,6 @@
 import 'package:http/http.dart' as http;
 import 'package:news_app/config/config.dart';
+import 'package:news_app/models/news_model.dart';
 
 class NewsApi {
   Future getAllNews () async {
@@ -15,6 +16,9 @@ class NewsApi {
         },
         );
         print(response.body);
+        if(response.statusCode == 200) {
+          return newsModelFromJson(response.body);
+        }
     } catch(e) {
       print(e.toString());
     }

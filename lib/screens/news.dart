@@ -10,6 +10,9 @@ class News extends StatefulWidget {
 }
 
 class _NewsState extends State<News> {
+
+  List allNews = [];
+  String textValue = "";
   @override
 
   void initState() {
@@ -18,11 +21,22 @@ class _NewsState extends State<News> {
   }
 
   void newsApiCall() async{
-    await NewsApi().getAllNews();
+    //getting response from api
+    var res = await NewsApi().getAllNews();
+    // if res is not null
+    if(res != null) {
+      print(res.articles);
+      setState(() {
+        allNews = res.articles;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat("kk:mm:ss \n EEE d MMM ").format(now);
+
     return Scaffold(
       appBar: AppBar(
         title: Text("News App"),
@@ -31,9 +45,13 @@ class _NewsState extends State<News> {
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              Container(
+          child:allNews.isNotEmpty? ListView.builder( //when we need to put widget on a loop
+            physics: const NeverScrollableScrollPhysics(), //turns off scroll property of list builder
+            shrinkWrap: true, //It reduces the list builder's height to the height of the containers
+            itemCount: allNews.length, //value 11807
+            itemBuilder: (context, index) {
+              return Container(
+                margin: const EdgeInsets.only(bottom: 10.0),
                 padding: const EdgeInsets.all(10.0),
                 decoration: BoxDecoration(
                   border: Border.all(
@@ -45,10 +63,11 @@ class _NewsState extends State<News> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    if(allNews[index].urlToImage != null)
                     ClipRRect(
                       borderRadius: BorderRadius.circular(10.0),
                       child: Image.network(
-                        "https://images.unsplash.com/photo-1575936123452-b67c3203c357?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aW1hZ2V8ZW58MHx8MHx8&w=1000&q=80",
+                        allNews[index].urlToImage,
                         width: 150,
                       ),
                     ),
@@ -58,23 +77,36 @@ class _NewsState extends State<News> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "How can you improve your photography?",
+                            allNews[index].title,
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
-                          Text("By Dipen"),
-                          Text("Published At: 2023-04-06"),
-                          Text("Published By: dipenmaharjan.com.np"),
+                          if(allNews[index].author != null)
+                          Text(
+                            allNews[index].author,
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                          Text(
+                            allNews[index].publishedAt.toString(),
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          Text("Published By: prajitaadhikari.com.np"),
                         ],
                       ),
                     ),
                   ],
                 ),
-              ),
-            ],
-          ),
+              );
+            }
+          ):Container(),
         ),
       ),
     );
